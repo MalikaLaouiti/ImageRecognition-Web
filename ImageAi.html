@@ -1,0 +1,44 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Recognition</title>
+    <link rel="stylesheet" href="ImageAI.css" />
+    <link rel="icon" href="C:\malika\ete 2024\WebProSoft\CB-webversion\favicon.ico" >
+    <script language="javascript" src="ImageAi.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Assitant Intelligence Artificielle Image Recognition</h1>
+        <h4>Renseigner une image à partir de votre drive (au format png) via le bouton 'Browse'</h4>
+        <table>
+            <tr>
+                <td rowspan="3" width="75%" >
+                    <div class="content">
+                        <img id="selectedImage" src="https://www.webprosoft.fr/assets/img/logo-dark1.png" title="Aucune image sélectionnée" >
+                    </div>
+                </td>
+                <td>
+                    <button type="button" id="browse-button" onclick="document.getElementById('imageInput').click();">Browse</button>
+                </td>
+            </tr>
+            <tr> 
+                <td>
+                    <button type="reset" id="reset-button" onclick="resetImage()">Reset</button>
+                </td>
+            </tr>
+            <tr>
+                
+                <td>
+                    <button type="submit" id="submit-button">Valider</button>
+                </td>
+            </tr>
+
+        </table>
+        <form id="imageForm" action="https://your-cloud-service.com/api/upload" method="POST" enctype="multipart/form-data">
+            <input type="file" id="imageInput" name="image" style="display:none;" onchange="previewImage(event);">
+        </form>
+    </div>    
+</body>
+</html>
