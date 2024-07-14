@@ -9,31 +9,41 @@
     <script language="javascript" src="ImageAi.js"></script>
 </head>
 <body>
-    <div class="container">
+    <div class="container" >
         <h1>Assitant Intelligence Artificielle Image Recognition</h1>
-        <h4>Renseigner une image à partir de votre drive (au format png) via le bouton 'Browse'</h4>
+        <h4>Renseigner une image à partir de votre drive (au format png) via le bouton 'Parcourir'</h4>
         <table>
             <tr>
-                <td rowspan="3" width="75%" >
+                <td rowspan="5" width="75%" >
                     <div class="dropzone" id="dropzone">
                         <input type="file" id="imageInput" name="image" style="display:none;" accept="image/png, image/jpeg" onchange="previewImage(event)">
                         <img width="20%" id="selectedImage" src="image.png" alt="upload" />
-                        <h3 >drag & drop your PNG or JPEG files here</h3>
+                        <h3 >glissez et déposez vos fichiers PNG ici</h3>
                     </div>
                 </td>
                 <td>
-                    <button type="button" id="browse-button" onclick="document.getElementById('imageInput').click();" >Browse</button>
+                    <button type="button" id="browse-button" onclick="document.getElementById('imageInput').click();" >Parcourir</button>
                 </td>
             </tr>
             <tr> 
                 <td>
-                    <button type="reset" id="reset-button" onclick="resetImage()">Reset</button>
+                    <button type="reset" id="reset-button" onclick="resetImage()">Réinitialiser</button>
                 </td>
             </tr>
             <tr>
-                
                 <td>
                     <button type="submit" id="submit-button">Valider</button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" id="element"/>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label id="found">Trouvé</label>
+                    <label id="Not-found">Non Trouvé</label>
                 </td>
             </tr>
             
