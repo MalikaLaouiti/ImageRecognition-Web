@@ -15,12 +15,14 @@
         <table>
             <tr>
                 <td rowspan="3" width="75%" >
-                    <div class="content">
-                        <img id="selectedImage" src="https://www.webprosoft.fr/assets/img/logo-dark1.png" title="Aucune image sélectionnée" >
+                    <div class="dropzone" id="dropzone">
+                        <input type="file" id="imageInput" name="image" style="display:none;" accept="image/png, image/jpeg" onchange="previewImage(event)">
+                        <img width="20%" id="selectedImage" src="image.png" alt="upload" />
+                        <h3 >drag & drop your PNG or JPEG files here</h3>
                     </div>
                 </td>
                 <td>
-                    <button type="button" id="browse-button" onclick="document.getElementById('imageInput').click();">Browse</button>
+                    <button type="button" id="browse-button" onclick="document.getElementById('imageInput').click();" >Browse</button>
                 </td>
             </tr>
             <tr> 
@@ -34,11 +36,9 @@
                     <button type="submit" id="submit-button">Valider</button>
                 </td>
             </tr>
-
+            
         </table>
-        <form id="imageForm" action="https://your-cloud-service.com/api/upload" method="POST" enctype="multipart/form-data">
-            <input type="file" id="imageInput" name="image" style="display:none;" onchange="previewImage(event);">
-        </form>
+       
     </div>    
 </body>
 </html>
