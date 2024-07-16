@@ -1,0 +1,17 @@
+{
+  "name": "imagerecognition-web",
+  "version": "1.0.0",
+  "main": "ImageAi.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@azure-rest/ai-vision-image-analysis": "^1.0.0-beta.2",
+    "@azure/core-auth": "^1.7.2",
+    "dotenv": "^16.4.5"
+  }
+}
