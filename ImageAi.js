@@ -90,31 +90,46 @@ function resetImage() {
     }
 }
 
-async function analyzeImageFromUrl() {
-  const result = await client.path('/imageanalysis:analyze').post({
-    body: {
-        url: imageUrl
-    },
-    queryParameters: {
-        features: features
-    },
-    contentType: 'application/json'
+async function analyzeImage(imageBase64) {
+    try {
+      const result = await client.path('/imageanalysis:analyze').post({
+        body: {
+            image: imageBase64
+        },
+        queryParameters: {
+            features: features
+        },
+        contentType: 'application/json'
+      });
+  
+      const iaResult = result.body;
+  
+      let output = '';
+  
+      if (iaResult.captionResult) {
+        output += `Caption: ${iaResult.captionResult.text} (confidence: ${iaResult.captionResult.confidence})\n`;
+      }
+      if (iaResult.readResult) {
+        iaResult.readResult.blocks.forEach(block => {
+          output += `Text Block: ${JSON.stringify(block)}\n`;
+        });
+      }
+  
+      document.getElementById('result').textContent = output;
+  
+    } catch (error) {
+      console.error('Error analyzing image:', error);
+      document.getElementById('result').textContent = 'Error analyzing image. Please try again.';
+    }
+  }
+  
+  document.getElementById('submit-button').addEventListener('click', () => {
+    const selectedImage = document.getElementById('selectedImage');
+    if (selectedImage.src && selectedImage.src.startsWith('data:image')) {
+      const imageBase64 = selectedImage.src.split(',')[1]; // Extract the base64 part
+      analyzeImage(imageBase64);
+    } else {
+      document.getElementById('result').textContent = 'Please upload an image first.';
+    }
   });
-
-  const iaResult = result.body;
-
-  let output = '';
-
-  if (iaResult.captionResult) {
-    output += `Caption: ${iaResult.captionResult.text} (confidence: ${iaResult.captionResult.confidence})\n`;
-  }
-  if (iaResult.readResult) {
-    iaResult.readResult.blocks.forEach(block => {
-      output += `Text Block: ${JSON.stringify(block)}\n`;
-    });
-  }
-
-  document.getElementById('output').textContent = output;
-}
-
-document.getElementById('submit-button').addEventListener('click', analyzeImageFromUrl);
+  

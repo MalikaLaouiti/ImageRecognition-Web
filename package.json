@@ -11,7 +11,9 @@
   "description": "",
   "dependencies": {
     "@azure-rest/ai-vision-image-analysis": "^1.0.0-beta.2",
+    "@azure/cognitiveservices-computervision": "^8.2.0",
     "@azure/core-auth": "^1.7.2",
+    "async": "^3.2.5",
     "dotenv": "^16.4.5"
   }
 }
