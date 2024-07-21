@@ -2,7 +2,7 @@ const path = require('path');
 const Dotenv = require('dotenv-webpack');
 
 module.exports = {
-  entry: './src/index.js',  // Adjust this path to your main JS file
+  entry: './ImageAi.js',  // Adjust this path to your main JS file
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),

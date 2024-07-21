@@ -20,3 +20,16 @@
             alert('Error analyzing image.');
         }
     });
+
+
+
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Recognition</title>
+    <link rel="stylesheet" href="ImageAI.css" />
+    <link rel="icon" href="C:\malika\ete 2024\WebProSoft\CB-webversion\ImageRecognition-Web\favicon.ico" >
+    <script src="https://cdn.jsdelivr.net/npm/@azure/cognitiveservices-computervision@3/dist/cognitiveservices-computervision.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script language="javascript" src="ImageAi.js" defer></script>
+</head>
