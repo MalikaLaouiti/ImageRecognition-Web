@@ -1,0 +1,22 @@
+
+    // Event listener for Analyze button
+    analysebutton.addEventListener('click', async () => {
+        const filePath = selectedImage.src; // Get the src attribute of the <img> element
+
+        const tagToFind = elementInput.value.trim(); // Get user input for tag to find
+        
+        try {
+            const found = await analyzeImage(filePath, tagToFind);
+            
+            if (found) {
+                console.log(`Tag '${tagToFind}' found in the image.`);
+                alert(`Tag '${tagToFind}' found in the image.`);
+            } else {
+                console.log(`Tag '${tagToFind}' not found in the image.`);
+                alert(`Tag '${tagToFind}' not found in the image.`);
+            }
+        } catch (error) {
+            console.error('Error analyzing image:', error);
+            alert('Error analyzing image.');
+        }
+    });

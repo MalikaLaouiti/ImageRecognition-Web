@@ -1,30 +1,59 @@
-
-const { ImageAnalysisClient } = require('@azure-rest/ai-vision-image-analysis');
-const createClient = require('@azure-rest/ai-vision-image-analysis').default;
-const { AzureKeyCredential } = require('@azure/core-auth');
-
-// Load the .env file if it exists
-require("dotenv").config();
-
-const endpoint = process.env['VISION_ENDPOINT'];
-const key = process.env['VISION_KEY'];
-
-const credential = new AzureKeyCredential(key);
-const client = createClient(endpoint, credential);
-
-const features = [
-  'Caption',
-  'Read'
-];
-
-const imageUrl = 'https://learn.microsoft.com/azure/ai-services/computer-vision/media/quickstarts/presentation.png';
-
+import axios from 'axios';
+import { ComputerVisionClient } from '@azure/cognitiveservices-computervision';
+import { ApiKeyCredentials } from '@azure/ms-rest-js';
 
 document.addEventListener('DOMContentLoaded', () => {
-    const dropzone = document.getElementById('dropzone');
+    require('dotenv').config();
+
+    const endpoint = process.env['VISION_ENDPOINT'];
+    const key = process.env['VISION_KEY'];
+
+    const client = new Azure.CognitiveServices.ComputerVision.ComputerVisionClient(
+        new Azure.CognitiveServices.ComputerVision.ApiKeyCredentials({ inHeader: { 'Ocp-Apim-Subscription-Key': key } }), endpoint
+    );
+
     const imageInput = document.getElementById('imageInput');
     const selectedImage = document.getElementById('selectedImage');
+    const analysebutton = document.getElementById('analysebutton');
+    const elementInput = document.getElementById('element');
+    const foundLabel = document.getElementById('found');
+    const notFoundLabel = document.getElementById('Not-found');
+    const resultInput = document.getElementById('result');
+    const dropzone = document.getElementById('dropzone');
 
+    // Event listener for Browse button
+    document.getElementById('browse-button').addEventListener('click', () => {
+        imageInput.click();
+    });
+
+    // Event listener for Reset button
+    document.getElementById('reset-button').addEventListener('click', () => {
+        resetImage();
+    });
+
+    analysebutton.addEventListener('click', () => {
+        const tagToFind = elementInput.value;
+        analyzeImage(selectedImage.src, tagToFind)
+            .then(tagFound => {
+                if (tagFound) {
+                    foundLabel.style.display = 'block';
+                    foundLabel.style.background="green";
+                    notFoundLabel.style.display = 'none';
+                    resultInput.value = `The tag "${tagToFind}" was found in the image.`;
+                } else {
+                    foundLabel.style.display = 'none';
+                    notFoundLabel.style.display = 'block';
+                    notFoundLabel.style.background="red";
+                    resultInput.value = `The tag "${tagToFind}" was not found in the image.`;
+                }
+            })
+            .catch(error => {
+                foundLabel.style.display = 'none';
+                notFoundLabel.style.display = 'none';
+                resultInput.value = `Error analyzing image: ${error.message}`;
+            });
+    });
+ 
     function removeInfoText() {
         const infoText = dropzone.querySelector('h3');
         if (infoText) {
@@ -44,92 +73,112 @@ document.addEventListener('DOMContentLoaded', () => {
     dropzone.addEventListener('drop', (e) => {
         e.preventDefault();
         dropzone.classList.remove('drag-over');
-        removeInfoText();
+        removeInfoText(); // Assuming this function removes any informational text or messages
+    
         const files = e.dataTransfer.files;
-        if (files.length > 0 && (files[0].type === 'image/png' )) {
-            const reader = new FileReader();
-            reader.onload = function (event) {
-                selectedImage.src = event.target.result;
-                selectedImage.style.width="100%";
-                removeInfoText(); // Ensure removal after setting src
+    
+        if (files.length > 0) {
+            const file = files[0];
+            const fileType = file.type;
+    
+            if (fileType === 'image/png') {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    selectedImage.src = event.target.result;
+                    selectedImage.style.width = "100%";
+                    removeInfoText(); // Ensure removal after setting src
+                }
+                reader.readAsDataURL(file);
+            } else {
+                alert('Please drop a PNG image file.');
+                if (!dropzone.querySelector('h3')) {
+                    const infoText = document.createElement('h3');
+                    infoText.textContent = 'glissez et déposez vos fichiers PNG ici';
+                    dropzone.appendChild(infoText);
+                }
             }
-            reader.readAsDataURL(files[0]);
         }
     });
-
+    
     imageInput.addEventListener('change', (event) => {
         removeInfoText();
         previewImage(event);
     });
 });
 
-function previewImage(event) {
-    const reader = new FileReader();
-    reader.onload = function () {
+    // Function to remove informational text from dropzone
+    function removeInfoText() {
+        const infoText = dropzone.querySelector('h3');
+        if (infoText) {
+            infoText.remove();
+            previewImage(event);
+        }
+    }
+
+    // Function to preview selected image
+    function previewImage(event) {
+            const file = event.target.files[0];
+            
+            // Check if the file is a PNG image
+            if (!file.type.startsWith('image/png')) {
+                alert('Please select a PNG image file.');
+                return;
+            }
+        
+            const reader = new FileReader();
+            reader.onload = function () {
+                const output = document.getElementById('selectedImage');
+                output.style.width = "100%";
+                output.src = reader.result;
+                removeInfoText(); // Ensure removal after setting src
+            }
+            reader.readAsDataURL(file);
+        }
+        
+
+    // Function to reset image selection
+    function resetImage() {
         const output = document.getElementById('selectedImage');
-        output.style.width = "100%";
-        output.src = reader.result;
-        removeInfoText(); // Ensure removal after setting src
+        output.src = 'image.png';
+        output.style.width = "20%";
+        document.getElementById('imageInput').value = "";
+    
+        const dropzone = document.getElementById('dropzone');
+        dropzone.classList.remove('drag-over');
+    
+        if (!dropzone.querySelector('h3')) {
+            const infoText = document.createElement('h3');
+            infoText.textContent = 'glissez et déposez vos fichiers PNG ici';
+            dropzone.appendChild(infoText);
+        }
     }
-    reader.readAsDataURL(event.target.files[0]);
-}
 
-function resetImage() {
-    const output = document.getElementById('selectedImage');
-    output.src = 'image.png';
-    output.style.width = "20%";
-    document.getElementById('imageInput').value = "";
+    // Function to analyze image using Azure Cognitive Services
+    async function analyzeImage(filePath, tagToFind) {
+        const apiVersion = '3.2'; // Update to the latest version
 
-    const dropzone = document.getElementById('dropzone');
-    dropzone.classList.remove('drag-over');
+        const url = `${endpoint}/vision/v${apiVersion}/analyze`;
 
-    if (!dropzone.querySelector('h3')) {
-        const infoText = document.createElement('h3');
-        infoText.textContent = 'drag & drop your PNG or JPEG files here';
-        dropzone.appendChild(infoText);
+        const params = {
+            visualFeatures: 'Tags',
+            details: '',
+            language: 'fr'
+        };
+
+        const headers = {
+            'Content-Type': 'application/json',
+            'Ocp-Apim-Subscription-Key': key
+        };
+
+        const body = {
+            url: filePath
+        };
+
+        try {
+            const response = await axios.post(url, body, { params, headers });
+            const tags = response.data.tags;
+            return tags.some(tag => tag.name.toLowerCase() === tagToFind.toLowerCase());
+        } catch (error) {
+            throw new Error(`Erreur lors de l'analyse de l'image: ${error.message}`);
+        }
     }
-}
-
-async function analyzeImage(imageBase64) {
-    try {
-      const result = await client.path('/imageanalysis:analyze').post({
-        body: {
-            image: imageBase64
-        },
-        queryParameters: {
-            features: features
-        },
-        contentType: 'application/json'
-      });
-  
-      const iaResult = result.body;
-  
-      let output = '';
-  
-      if (iaResult.captionResult) {
-        output += `Caption: ${iaResult.captionResult.text} (confidence: ${iaResult.captionResult.confidence})\n`;
-      }
-      if (iaResult.readResult) {
-        iaResult.readResult.blocks.forEach(block => {
-          output += `Text Block: ${JSON.stringify(block)}\n`;
-        });
-      }
-  
-      document.getElementById('result').textContent = output;
-  
-    } catch (error) {
-      console.error('Error analyzing image:', error);
-      document.getElementById('result').textContent = 'Error analyzing image. Please try again.';
-    }
-  }
-  
-  document.getElementById('submit-button').addEventListener('click', () => {
-    const selectedImage = document.getElementById('selectedImage');
-    if (selectedImage.src && selectedImage.src.startsWith('data:image')) {
-      const imageBase64 = selectedImage.src.split(',')[1]; // Extract the base64 part
-      analyzeImage(imageBase64);
-    } else {
-      document.getElementById('result').textContent = 'Please upload an image first.';
-    }
-  });
-  
