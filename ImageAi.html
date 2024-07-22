@@ -5,10 +5,18 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Image Recognition</title>
         <link rel="stylesheet" href="ImageAI.css" />
-        <link rel="icon" href="C:\malika\ete 2024\WebProSoft\CB-webversion\ImageRecognition-Web\favicon.ico" >
+        <!-- <link rel="icon" href="C:\malika\ete 2024\WebProSoft\CB-webversion\ImageRecognition-Web\favicon.ico" > -->
         <script src="https://cdn.jsdelivr.net/npm/@azure/cognitiveservices-computervision@3/dist/cognitiveservices-computervision.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-        <script language="javascript" src="ImageAi.js" defer></script>
+        <script language="javascript" src="ImageAi.js" defertype="module">
+            import { ComputerVisionClient } from 'https://cdn.jsdelivr.net/npm/@azure/cognitiveservices-computervision@latest/dist/index.browser.min.js';
+            import { ApiKeyCredentials } from 'https://cdn.jsdelivr.net/npm/@azure/ms-rest-js@latest/dist/index.browser.min.js';
+            const endpoint = process.env['VISION_ENDPOINT'];
+            const key = process.env['VISION_KEY'];
+
+            const credential = new AzureKeyCredential(key);
+            const client = createClient(endpoint, credential);
+        </script>
     </head>
 <body>
     <div class="container" >
@@ -18,7 +26,7 @@
             <tr>
                 <td rowspan="5" width="75%" >
                     <div class="dropzone" id="dropzone">
-                        <input type="file" id="imageInput" name="image" style="display:none;" accept="image/png, image/jpeg" onchange="previewImage(event)">
+                        <input type="file" id="imageInput" name="image" style="display:none;" accept="image/png" onchange="previewImage(event)">
                         <img width="20%" id="selectedImage" src="image.png" alt="upload" />
                         <h3 >glissez et déposez vos fichiers PNG ici</h3>
                     </div>
@@ -34,7 +42,7 @@
             </tr>
             <tr>
                 <td>
-                    <button type="button" id="analysebutton">Analyse</button>
+                    <button type="button" id="analysebutton" onclick="analyzeImage(selectedImage.src,element)">Analyse</button>
                 </td>
             </tr>
             <tr>
