@@ -1,17 +1,23 @@
-import axios from 'axios';
-import { ComputerVisionClient } from '@azure/cognitiveservices-computervision';
-import { ApiKeyCredentials } from '@azure/ms-rest-js';
+const { ImageAnalysisClient } = require('@azure-rest/ai-vision-image-analysis');
+const createClient = require('@azure-rest/ai-vision-image-analysis').default;
+const { AzureKeyCredential } = require('@azure/core-auth');
+
+// Load the .env file if it exists
+require("dotenv").config();
+
+const endpoint = process.env['VISION_ENDPOINT'];
+const key = process.env['VISION_KEY'];
+
+const credential = new AzureKeyCredential(key);
+const client = createClient(endpoint, credential);
+
+const features = [
+  'Caption',
+  'Read',
+  'Tags'
+];
 
 document.addEventListener('DOMContentLoaded', () => {
-    require('dotenv').config();
-
-    const endpoint = process.env['VISION_ENDPOINT'];
-    const key = process.env['VISION_KEY'];
-
-    const client = new Azure.CognitiveServices.ComputerVision.ComputerVisionClient(
-        new Azure.CognitiveServices.ComputerVision.ApiKeyCredentials({ inHeader: { 'Ocp-Apim-Subscription-Key': key } }), endpoint
-    );
-
     const imageInput = document.getElementById('imageInput');
     const selectedImage = document.getElementById('selectedImage');
     const analysebutton = document.getElementById('analysebutton');
@@ -30,36 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('reset-button').addEventListener('click', () => {
         resetImage();
     });
-
-    analysebutton.addEventListener('click', () => {
-        const tagToFind = elementInput.value;
-        analyzeImage(selectedImage.src, tagToFind)
-            .then(tagFound => {
-                if (tagFound) {
-                    foundLabel.style.display = 'block';
-                    foundLabel.style.background="green";
-                    notFoundLabel.style.display = 'none';
-                    resultInput.value = `The tag "${tagToFind}" was found in the image.`;
-                } else {
-                    foundLabel.style.display = 'none';
-                    notFoundLabel.style.display = 'block';
-                    notFoundLabel.style.background="red";
-                    resultInput.value = `The tag "${tagToFind}" was not found in the image.`;
-                }
-            })
-            .catch(error => {
-                foundLabel.style.display = 'none';
-                notFoundLabel.style.display = 'none';
-                resultInput.value = `Error analyzing image: ${error.message}`;
-            });
-    });
- 
-    function removeInfoText() {
-        const infoText = dropzone.querySelector('h3');
-        if (infoText) {
-            infoText.remove();
-        }
-    }
 
     dropzone.addEventListener('dragover', (e) => {
         e.preventDefault();
@@ -104,8 +80,33 @@ document.addEventListener('DOMContentLoaded', () => {
         removeInfoText();
         previewImage(event);
     });
-});
 
+
+    analysebutton.addEventListener('click', () => {
+        alert('Button clicked');
+        const tagToFind = elementInput.value;
+        analyzeImage(selectedImage.src, tagToFind)
+            .then(tagFound => {
+                if (tagFound) {
+                    foundLabel.style.display = 'block';
+                    foundLabel.style.background = "green";
+                    notFoundLabel.style.display = 'none';
+                    resultInput.value = `The tag "${tagToFind}" was found in the image.`;
+                } else {
+                    foundLabel.style.display = 'none';
+                    notFoundLabel.style.display = 'block';
+                    notFoundLabel.style.background = "red";
+                    resultInput.value = `The tag "${tagToFind}" was not found in the image.`;
+                }
+            })
+            .catch(error => {
+                foundLabel.style.display = 'none';
+                notFoundLabel.style.display = 'none';
+                resultInput.value = `Error analyzing image: ${error.message}`;
+            });
+    });
+
+});
     // Function to remove informational text from dropzone
     function removeInfoText() {
         const infoText = dropzone.querySelector('h3');
@@ -117,23 +118,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to preview selected image
     function previewImage(event) {
-            const file = event.target.files[0];
-            
-            // Check if the file is a PNG image
-            if (!file.type.startsWith('image/png')) {
-                alert('Please select a PNG image file.');
-                return;
-            }
+        const file = event.target.files[0];
         
-            const reader = new FileReader();
-            reader.onload = function () {
-                const output = document.getElementById('selectedImage');
-                output.style.width = "100%";
-                output.src = reader.result;
-                removeInfoText(); // Ensure removal after setting src
-            }
-            reader.readAsDataURL(file);
+        // Check if the file is a PNG image
+        if (!file.type.startsWith('image/png')) {
+            alert('Please select a PNG image file.');
+            return;
         }
+    
+        const reader = new FileReader();
+        reader.onload = function () {
+            const output = document.getElementById('selectedImage');
+            output.style.width = "100%";
+            output.src = reader.result;
+            removeInfoText(); // Ensure removal after setting src
+        }
+        reader.readAsDataURL(file);
+    }
         
 
     // Function to reset image selection
@@ -153,32 +154,31 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Function to analyze image using Azure Cognitive Services
-    async function analyzeImage(filePath, tagToFind) {
-        const apiVersion = '3.2'; // Update to the latest version
+    async function analyzeImage(imageUrl, tagToFind) {
+        alert('hii');
+        const result = await client.path('/imageanalysis:analyze').post({
+            body: {
+                url: imageUrl
+            },
+            queryParameters: {
+                features: features
+            },
+            contentType: 'application/json'
+        });
 
-        const url = `${endpoint}/vision/v${apiVersion}/analyze`;
+        const iaResult = result.body;
 
-        const params = {
-            visualFeatures: 'Tags',
-            details: '',
-            language: 'fr'
-        };
-
-        const headers = {
-            'Content-Type': 'application/json',
-            'Ocp-Apim-Subscription-Key': key
-        };
-
-        const body = {
-            url: filePath
-        };
-
-        try {
-            const response = await axios.post(url, body, { params, headers });
-            const tags = response.data.tags;
-            return tags.some(tag => tag.name.toLowerCase() === tagToFind.toLowerCase());
-        } catch (error) {
-            throw new Error(`Erreur lors de l'analyse de l'image: ${error.message}`);
+        if (iaResult.captionResult) {
+            console.log(`Caption: ${iaResult.captionResult.text}`);
         }
+        if (iaResult.readResult) {
+            iaResult.readResult.blocks.forEach(block => console.log(`Text Block: ${JSON.stringify(block)}`));
+        }
+        if (iaResult.tagResult) {
+            const tagFound = iaResult.tagResult.tags.some(tag => tag.name === tagToFind);
+            return tagFound;
+        }
+
+        return false;
     }
+
