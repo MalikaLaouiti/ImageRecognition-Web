@@ -2,12 +2,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const dropzone = document.getElementById('dropzone');
     const imageInput = document.getElementById('imageInput');
     const selectedImage = document.getElementById('selectedImage');
-    const analyseButton = document.getElementById('analyseButton');
-    const elementInput = document.getElementById('elementInput');
-    const foundLabel = document.getElementById('foundLabel');
-    const notFoundLabel = document.getElementById('notFoundLabel');
-    const resultInput = document.getElementById('resultInput');
 
+    function removeInfoText() {
+        const infoText = dropzone.querySelector('h3');
+        if (infoText) {
+            infoText.remove();
+        }
+    }
 
     dropzone.addEventListener('dragover', (e) => {
         e.preventDefault();
@@ -35,22 +36,10 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     imageInput.addEventListener('change', (event) => {
-        alert('Image');
         removeInfoText();
         previewImage(event);
     });
-
-
-
-
 });
-
-function removeInfoText() {
-    const infoText = dropzone.querySelector('h3');
-    if (infoText) {
-        infoText.remove();
-    }
-}
 
 function previewImage(event) {
     const reader = new FileReader();
@@ -78,4 +67,3 @@ function resetImage() {
         dropzone.appendChild(infoText);
     }
 }
-

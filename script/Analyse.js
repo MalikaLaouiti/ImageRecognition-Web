@@ -29,7 +29,7 @@ const endpoint =  "https://imagerecognition-webprosoft.cognitiveservices.azure.c
 
 async function analyzeImage(imageUrl, tagToFind) {
     alert("gvug");
-    
+    console.log('Analyzing image:', imageSrc, 'with tag:', tagToFind);
     try {
         const result = await client.path('/imageanalysis:analyze').post({
             body: { url: imageUrl },
@@ -68,6 +68,22 @@ async function analyzeImage(imageUrl, tagToFind) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    const selectedImage = document.getElementById('selectedImage');
+    const analyseButton = document.getElementById('analyseButton');
+    const elementInput = document.getElementById('elementInput');
+
+    // Vérifiez si les éléments sont correctement sélectionnés
+    if (!analyseButton) {
+        console.error('L\'élément avec ID "analyseButton" n\'a pas été trouvé.');
+        return;
+    }
+    
+    if (!elementInput) {
+        console.error('L\'élément avec ID "elementInput" n\'a pas été trouvé.');
+        return;
+    }
+
+
     analyseButton.addEventListener('click', () => {
         alert('Button clicked');
         const tagToFind = elementInput.value;

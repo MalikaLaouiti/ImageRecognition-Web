@@ -5,9 +5,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Image Recognition</title>
         <link rel="stylesheet" href="ImageAI.css" />
-        <script language="javascript" src="./script/ImageAi.js" async >
+        <script language="javascript" src="./script/ImageAi.js" defer >
         </script>
-        <script language="javascript" src="./script/Analyse.js" type="module" ></script> 
+      
         
     </head>
 <body>
@@ -34,7 +34,8 @@
             </tr>
             <tr>
                 <td>
-                    <button type="button" id="analyseButton" onclick="analyzeImage(selectedImage.src,element)">Analyse</button>
+                    <button type="button" id="analyseButton">Analyse</button>
+                    <script language="javascript" src="./script/Analyse.js" type="module" async></script> 
                 </td>
             </tr>
             <tr>
