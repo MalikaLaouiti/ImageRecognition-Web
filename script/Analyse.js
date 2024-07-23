@@ -1,33 +1,19 @@
-import { ImageAnalysisClient } from '@azure-rest/ai-vision-image-analysis';
-import createClient from '@azure-rest/ai-vision-image-analysis';
-import { AzureKeyCredential } from '@azure/core-auth';
-
-// Load the .env file if it exists
-// require("dotenv").config();
-
-const dropzone = document.getElementById('dropzone');
-const imageInput = document.getElementById('imageInput');
-const selectedImage = document.getElementById('selectedImage');
-const analyseButton = document.getElementById('analyseButton');
-const elementInput = document.getElementById('elementInput');
-const foundLabel = document.getElementById('foundLabel');
-const notFoundLabel = document.getElementById('notFoundLabel');
-const resultInput = document.getElementById('resultInput');
-
 const endpoint =  "https://imagerecognition-webprosoft.cognitiveservices.azure.com/";
-    
-    const key =  "624e99b60d484ea091768b9fe9a1e983";
+const key =  "624e99b60d484ea091768b9fe9a1e983";
 
-    const credential = new AzureKeyCredential(key);
-    const client = createClient(endpoint, credential);
+const credential = new core-auth.AzureKeyCredential(key);
+const client = createClient(endpoint, credential);
 
-    const features = [
-    'Caption',
-    'Read',
-    'Tags'
-    ];
+const features = [
+'Caption',
+'Read',
+'Tags'
+];
 
 async function analyzeImage(imageUrl, tagToFind) {
+    const foundLabel = document.getElementById('found');
+    const notFoundLabel = document.getElementById('Not-found');
+    const resultInput = document.getElementById('result');
     alert("gvug");
     console.log('Analyzing image:', imageSrc, 'with tag:', tagToFind);
     try {
@@ -84,11 +70,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    analyseButton.addEventListener('click', () => {
-        alert('Button clicked');
-        const tagToFind = elementInput.value;
-        analyzeImage(selectedImage.src, tagToFind);
-    });
+    // analyseButton.addEventListener('click', () => {
+    //     alert('Button clicked');
+    //     const tagToFind = elementInput.value;
+    //     analyzeImage(selectedImage.src, tagToFind);
+    // });
 });
 
 

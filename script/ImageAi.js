@@ -2,6 +2,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const dropzone = document.getElementById('dropzone');
     const imageInput = document.getElementById('imageInput');
     const selectedImage = document.getElementById('selectedImage');
+    const elementInput = document.getElementById('element');
+
+  
 
     function removeInfoText() {
         const infoText = dropzone.querySelector('h3');
@@ -39,6 +42,28 @@ document.addEventListener('DOMContentLoaded', () => {
         removeInfoText();
         previewImage(event);
     });
+
+    
+    analyseButton.addEventListener('click', () => {
+        alert('Button clicked');
+        const tagToFind = elementInput.value;
+        
+        import('/script/Analyse.js')
+            .then(module => {
+                // The `analyzeImage` function should be exported from scriptToExecute.js
+                if (typeof module.analyzeImage === 'function') {
+                    module.analyzeImage(selectedImage.src, tagToFind);
+                } else {
+                    console.error('Function analyzeImage is not defined in the module.');
+                }
+            })
+            .catch(error => {
+                console.error('Error loading the module:', error);
+            });
+
+    
+    });
+
 });
 
 function previewImage(event) {
