@@ -42,3 +42,16 @@
     const client = new Azure.CognitiveServices.ComputerVision.ComputerVisionClient(
         new Azure.CognitiveServices.ComputerVision.ApiKeyCredentials({ inHeader: { 'Ocp-Apim-Subscription-Key': key } }), endpoint
     );
+
+
+    import { ComputerVisionClient } from 'https://cdn.jsdelivr.net/npm/@azure/cognitiveservices-computervision@latest/dist/index.browser.min.js';
+            import { ApiKeyCredentials } from 'https://cdn.jsdelivr.net/npm/@azure/ms-rest-js@latest/dist/index.browser.min.js';
+            const endpoint = process.env['VISION_ENDPOINT'];
+            const key = process.env['VISION_KEY'];
+
+            const credential = new AzureKeyCredential(key);
+            const client = createClient(endpoint, credential);
+
+                    <!-- <link rel="icon" href="C:\malika\ete 2024\WebProSoft\CB-webversion\ImageRecognition-Web\favicon.ico" > -->
+        <script src="https://cdn.jsdelivr.net/npm/@azure/cognitiveservices-computervision@3/dist/cognitiveservices-computervision.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
