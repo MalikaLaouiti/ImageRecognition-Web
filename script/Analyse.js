@@ -1,37 +1,55 @@
-
+require('dotenv').config();
+import fetch from 'node-fetch';
 import createClient from '@azure-rest/ai-vision-image-analysis';
 import { AzureKeyCredential } from '@azure/core-auth';
 
-const endpoint =  "https://imagerecognition-webprosoft.cognitiveservices.azure.com/";
-const key =  "624e99b60d484ea091768b9fe9a1e983";
+const endpoint = process.env.AZURE_ENDPOINT; // Ensure this is correct and has no extra slashes
+const key = process.env.AZURE_KEY;
+const apiVersion = '2024-02-01'; // API version
 
 const credential = new AzureKeyCredential(key);
 const client = createClient(endpoint, credential);
 
-const features = [
-'Caption',
-'Read',
-'Tags'
-];
+const features = ['tags', 'description'];
 
 async function analyzeImage(imageUrl, tagToFind) {
-    const foundLabel = document.getElementById('found');
-    const notFoundLabel = document.getElementById('Not-found');
+    const foundLabel = document.getElementById('foundLabel');
+    const notFoundLabel = document.getElementById('notFoundLabel');
     const resultInput = document.getElementById('result');
-    alert("gvug");
+    alert("Analyzing image...");
     console.log('Analyzing image:', imageUrl, 'with tag:', tagToFind);
+
+    if (!foundLabel || !notFoundLabel || !resultInput) {
+        console.error('Required elements not found in the DOM.');
+        return;
+    }
+
     try {
-        const result = await client.path('/imageanalysis:analyze').post({
-            body: { url: imageUrl },
-            queryParameters: { features: ['Tags'] },
-            contentType: 'application/json'
+        const fullUrl = `${endpoint}/vision/v3.2/analyze`;
+        const response = await fetch(fullUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Ocp-Apim-Subscription-Key': key // Ensure this key is correct
+            },
+            body: JSON.stringify({ url: imageUrl }),
+            query: new URLSearchParams({
+                visualFeatures: features.join(','),
+                'api-version': apiVersion
+            }).toString()
         });
 
-        const iaResult = result.body;
+        if (!response.ok) {
+            const errorDetail = await response.text(); // Get response text to help with debugging
+            throw new Error(`Error ${response.status}: ${response.statusText}\nDetails: ${errorDetail}`);
+        }
 
-        if (iaResult.tagResult) {
-            const tagFound = iaResult.tagResult.tags.some(tag => tag.name === tagToFind);
-            
+        const iaResult = await response.json();
+        console.log(iaResult);
+
+        if (iaResult.tags) {
+            const tagFound = iaResult.tags.some(tag => tag.name === tagToFind);
+
             if (tagFound) {
                 foundLabel.style.display = 'block';
                 foundLabel.style.background = "green";
@@ -62,17 +80,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const analyseButton = document.getElementById('analyseButton');
     const elementInput = document.getElementById('element');
 
-    // Vérifiez si les éléments sont correctement sélectionnés
     if (!analyseButton) {
-        console.error('L\'élément avec ID "analyseButton" n\'a pas été trouvé.');
+        console.error('Element with ID "analyseButton" not found.');
         return;
     }
     
     if (!elementInput) {
-        console.error('L\'élément avec ID "elementInput" n\'a pas été trouvé.');
+        console.error('Element with ID "element" not found.');
         return;
     }
-
 
     analyseButton.addEventListener('click', () => {
         alert('Button clicked');
@@ -80,5 +96,3 @@ document.addEventListener('DOMContentLoaded', () => {
         analyzeImage(selectedImage.src, tagToFind);
     });
 });
-
-

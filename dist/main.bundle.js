@@ -24,9 +24,9 @@ eval("\n\nmodule.exports = ansiHTML\n\n// Reference to https://github.com/sindre
 /*!***************************!*\
   !*** ./script/ImageAi.js ***!
   \***************************/
-/***/ ((__unused_webpack_module, __unused_webpack_exports, __webpack_require__) => {
+/***/ (() => {
 
-eval("document.addEventListener('DOMContentLoaded', function () {\n  var dropzone = document.getElementById('dropzone');\n  var imageInput = document.getElementById('imageInput');\n  var selectedImage = document.getElementById('selectedImage');\n  var elementInput = document.getElementById('element');\n  dropzone.addEventListener('dragover', function (e) {\n    e.preventDefault();\n    dropzone.classList.add('drag-over');\n  });\n  dropzone.addEventListener('dragleave', function () {\n    dropzone.classList.remove('drag-over');\n  });\n  dropzone.addEventListener('drop', function (e) {\n    e.preventDefault();\n    dropzone.classList.remove('drag-over');\n    removeInfoText();\n    var files = e.dataTransfer.files;\n    if (files.length > 0 && (files[0].type === 'image/png' || files[0].type === 'image/jpeg')) {\n      var reader = new FileReader();\n      reader.onload = function (event) {\n        selectedImage.src = event.target.result;\n        selectedImage.style.width = \"100%\";\n        removeInfoText(); // Ensure removal after setting src\n      };\n      reader.readAsDataURL(files[0]);\n    }\n  });\n  imageInput.addEventListener('change', function (event) {\n    removeInfoText();\n    previewImage(event);\n  });\n  analyseButton.addEventListener('click', function () {\n    alert('Button clicked');\n    var tagToFind = elementInput.value;\n    Promise.all(/*! import() */[__webpack_require__.e(\"vendors-node_modules_azure-rest_ai-vision-image-analysis_dist-esm_src_index_js\"), __webpack_require__.e(\"script_Analyse_js\")]).then(__webpack_require__.bind(__webpack_require__, /*! ../../../../../../script/Analyse.js */ \"./script/Analyse.js\")).then(function (module) {\n      // The `analyzeImage` function should be exported from scriptToExecute.js\n      if (typeof module.analyzeImage === 'function') {\n        module.analyzeImage(selectedImage.src, tagToFind);\n      } else {\n        console.error('Function analyzeImage is not defined in the module.');\n      }\n    })[\"catch\"](function (error) {\n      console.error('Error loading the module:', error);\n    });\n  });\n});\nfunction removeInfoText() {\n  var infoText = dropzone.querySelector('h3');\n  if (infoText) {\n    infoText.remove();\n  }\n}\nfunction previewImage(event) {\n  var reader = new FileReader();\n  reader.onload = function () {\n    var output = document.getElementById('selectedImage');\n    output.style.width = \"100%\";\n    output.src = reader.result;\n    removeInfoText(); // Ensure removal after setting src\n  };\n  reader.readAsDataURL(event.target.files[0]);\n}\nfunction resetImage() {\n  var output = document.getElementById('selectedImage');\n  output.src = 'image.png';\n  output.style.width = \"20%\";\n  document.getElementById('imageInput').value = \"\";\n  var dropzone = document.getElementById('dropzone');\n  dropzone.classList.remove('drag-over');\n  if (!dropzone.querySelector('h3')) {\n    var infoText = document.createElement('h3');\n    infoText.textContent = 'drag & drop your PNG or JPEG files here';\n    dropzone.appendChild(infoText);\n  }\n}\n\n//# sourceURL=webpack://image-analysis/./script/ImageAi.js?");
+eval("document.addEventListener('DOMContentLoaded', function () {\n  var dropzone = document.getElementById('dropzone');\n  var imageInput = document.getElementById('imageInput');\n  var selectedImage = document.getElementById('selectedImage');\n  var elementInput = document.getElementById('element');\n  function removeInfoText() {\n    var infoText = dropzone.querySelector('h3');\n    if (infoText) {\n      infoText.remove();\n    }\n  }\n  function previewImage(event) {\n    var reader = new FileReader();\n    reader.onload = function () {\n      var output = document.getElementById('selectedImage');\n      output.style.width = \"100%\";\n      output.src = reader.result;\n      removeInfoText(); // Ensure removal after setting src\n    };\n    reader.readAsDataURL(event.target.files[0]);\n  }\n  function resetImage() {\n    var output = document.getElementById('selectedImage');\n    output.src = 'image.png';\n    output.style.width = \"20%\";\n    document.getElementById('imageInput').value = \"\";\n    var dropzone = document.getElementById('dropzone');\n    dropzone.classList.remove('drag-over');\n    if (!dropzone.querySelector('h3')) {\n      var infoText = document.createElement('h3');\n      infoText.textContent = 'drag & drop your PNG or JPEG files here';\n      dropzone.appendChild(infoText);\n    }\n  }\n\n  // Event listener for Browse button\n  document.getElementById('browse-button').addEventListener('click', function () {\n    imageInput.click();\n  });\n\n  // Event listener for Reset button\n  document.getElementById('reset-button').addEventListener('click', function () {\n    resetImage();\n  });\n\n  // Event listener for dropzone\n  dropzone.addEventListener('dragover', function (e) {\n    e.preventDefault();\n    dropzone.classList.add('drag-over');\n  });\n  dropzone.addEventListener('dragleave', function () {\n    dropzone.classList.remove('drag-over');\n  });\n  dropzone.addEventListener('drop', function (e) {\n    e.preventDefault();\n    dropzone.classList.remove('drag-over');\n    removeInfoText();\n    var files = e.dataTransfer.files;\n    if (files.length > 0 && (files[0].type === 'image/png' || files[0].type === 'image/jpeg')) {\n      var reader = new FileReader();\n      reader.onload = function (event) {\n        selectedImage.src = event.target.result;\n        selectedImage.style.width = \"100%\";\n        removeInfoText(); // Ensure removal after setting src\n      };\n      reader.readAsDataURL(files[0]);\n    }\n  });\n  imageInput.addEventListener('change', function (event) {\n    removeInfoText();\n    previewImage(event);\n  });\n});\n\n//# sourceURL=webpack://image-analysis/./script/ImageAi.js?");
 
 /***/ }),
 
@@ -363,28 +363,6 @@ eval("/** @typedef {\"info\" | \"warning\" | \"error\"} LogLevel */\n\n/** @type
 /******/ 		};
 /******/ 	})();
 /******/ 	
-/******/ 	/* webpack/runtime/ensure chunk */
-/******/ 	(() => {
-/******/ 		__webpack_require__.f = {};
-/******/ 		// This file contains only the entry chunk.
-/******/ 		// The chunk loading function for additional chunks
-/******/ 		__webpack_require__.e = (chunkId) => {
-/******/ 			return Promise.all(Object.keys(__webpack_require__.f).reduce((promises, key) => {
-/******/ 				__webpack_require__.f[key](chunkId, promises);
-/******/ 				return promises;
-/******/ 			}, []));
-/******/ 		};
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/get javascript chunk filename */
-/******/ 	(() => {
-/******/ 		// This function allow to reference async chunks
-/******/ 		__webpack_require__.u = (chunkId) => {
-/******/ 			// return url for filenames based on template
-/******/ 			return "" + chunkId + ".bundle.js";
-/******/ 		};
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/get javascript update chunk filename */
 /******/ 	(() => {
 /******/ 		// This function allow to reference all chunks
@@ -401,7 +379,7 @@ eval("/** @typedef {\"info\" | \"warning\" | \"error\"} LogLevel */\n\n/** @type
 /******/ 	
 /******/ 	/* webpack/runtime/getFullHash */
 /******/ 	(() => {
-/******/ 		__webpack_require__.h = () => ("9ca276552be85f3d00bf")
+/******/ 		__webpack_require__.h = () => ("4534353014270b559b3c")
 /******/ 	})();
 /******/ 	
 /******/ 	/* webpack/runtime/global */
@@ -904,44 +882,7 @@ eval("/** @typedef {\"info\" | \"warning\" | \"error\"} LogLevel */\n\n/** @type
 /******/ 			"main": 0
 /******/ 		};
 /******/ 		
-/******/ 		__webpack_require__.f.j = (chunkId, promises) => {
-/******/ 				// JSONP chunk loading for javascript
-/******/ 				var installedChunkData = __webpack_require__.o(installedChunks, chunkId) ? installedChunks[chunkId] : undefined;
-/******/ 				if(installedChunkData !== 0) { // 0 means "already installed".
-/******/ 		
-/******/ 					// a Promise means "currently loading".
-/******/ 					if(installedChunkData) {
-/******/ 						promises.push(installedChunkData[2]);
-/******/ 					} else {
-/******/ 						if(true) { // all chunks have JS
-/******/ 							// setup Promise in chunk cache
-/******/ 							var promise = new Promise((resolve, reject) => (installedChunkData = installedChunks[chunkId] = [resolve, reject]));
-/******/ 							promises.push(installedChunkData[2] = promise);
-/******/ 		
-/******/ 							// start chunk loading
-/******/ 							var url = __webpack_require__.p + __webpack_require__.u(chunkId);
-/******/ 							// create error before stack unwound to get useful stacktrace later
-/******/ 							var error = new Error();
-/******/ 							var loadingEnded = (event) => {
-/******/ 								if(__webpack_require__.o(installedChunks, chunkId)) {
-/******/ 									installedChunkData = installedChunks[chunkId];
-/******/ 									if(installedChunkData !== 0) installedChunks[chunkId] = undefined;
-/******/ 									if(installedChunkData) {
-/******/ 										var errorType = event && (event.type === 'load' ? 'missing' : event.type);
-/******/ 										var realSrc = event && event.target && event.target.src;
-/******/ 										error.message = 'Loading chunk ' + chunkId + ' failed.\n(' + errorType + ': ' + realSrc + ')';
-/******/ 										error.name = 'ChunkLoadError';
-/******/ 										error.type = errorType;
-/******/ 										error.request = realSrc;
-/******/ 										installedChunkData[1](error);
-/******/ 									}
-/******/ 								}
-/******/ 							};
-/******/ 							__webpack_require__.l(url, loadingEnded, "chunk-" + chunkId, chunkId);
-/******/ 						}
-/******/ 					}
-/******/ 				}
-/******/ 		};
+/******/ 		// no chunk on demand loading
 /******/ 		
 /******/ 		// no prefetching
 /******/ 		
@@ -1442,34 +1383,7 @@ eval("/** @typedef {\"info\" | \"warning\" | \"error\"} LogLevel */\n\n/** @type
 /******/ 		
 /******/ 		// no on chunks loaded
 /******/ 		
-/******/ 		// install a JSONP callback for chunk loading
-/******/ 		var webpackJsonpCallback = (parentChunkLoadingFunction, data) => {
-/******/ 			var [chunkIds, moreModules, runtime] = data;
-/******/ 			// add "moreModules" to the modules object,
-/******/ 			// then flag all "chunkIds" as loaded and fire callback
-/******/ 			var moduleId, chunkId, i = 0;
-/******/ 			if(chunkIds.some((id) => (installedChunks[id] !== 0))) {
-/******/ 				for(moduleId in moreModules) {
-/******/ 					if(__webpack_require__.o(moreModules, moduleId)) {
-/******/ 						__webpack_require__.m[moduleId] = moreModules[moduleId];
-/******/ 					}
-/******/ 				}
-/******/ 				if(runtime) var result = runtime(__webpack_require__);
-/******/ 			}
-/******/ 			if(parentChunkLoadingFunction) parentChunkLoadingFunction(data);
-/******/ 			for(;i < chunkIds.length; i++) {
-/******/ 				chunkId = chunkIds[i];
-/******/ 				if(__webpack_require__.o(installedChunks, chunkId) && installedChunks[chunkId]) {
-/******/ 					installedChunks[chunkId][0]();
-/******/ 				}
-/******/ 				installedChunks[chunkId] = 0;
-/******/ 			}
-/******/ 		
-/******/ 		}
-/******/ 		
-/******/ 		var chunkLoadingGlobal = self["webpackChunkimage_analysis"] = self["webpackChunkimage_analysis"] || [];
-/******/ 		chunkLoadingGlobal.forEach(webpackJsonpCallback.bind(null, 0));
-/******/ 		chunkLoadingGlobal.push = webpackJsonpCallback.bind(null, chunkLoadingGlobal.push.bind(chunkLoadingGlobal));
+/******/ 		// no jsonp function
 /******/ 	})();
 /******/ 	
 /************************************************************************/

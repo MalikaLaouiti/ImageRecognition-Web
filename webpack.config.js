@@ -1,5 +1,6 @@
 // webpack.config.js
 const path = require('path');
+const Dotenv = require('dotenv-webpack');
 
 module.exports = {
   entry: {
@@ -10,6 +11,9 @@ module.exports = {
     filename: '[name].bundle.js', // Use entry point name for output files
     path: path.resolve(__dirname, 'dist') // Output directory
   },
+  plugins: [
+    new Dotenv() // This will automatically read your .env file
+  ],
   module: {
     rules: [
       {

@@ -3,7 +3,53 @@ document.addEventListener('DOMContentLoaded', () => {
     const imageInput = document.getElementById('imageInput');
     const selectedImage = document.getElementById('selectedImage');
     const elementInput = document.getElementById('element');
+  
+    function removeInfoText() {
+        const infoText = dropzone.querySelector('h3');
+        if (infoText) {
+            infoText.remove();
+        }
+    }
 
+
+    function previewImage(event) {
+        const reader = new FileReader();
+        reader.onload = function () {
+            const output = document.getElementById('selectedImage');
+            output.style.width = "100%";
+            output.src = reader.result;
+            removeInfoText(); // Ensure removal after setting src
+        }
+        reader.readAsDataURL(event.target.files[0]);
+    }
+
+    function resetImage() {
+        const output = document.getElementById('selectedImage');
+        output.src = 'image.png';
+        output.style.width = "20%";
+        document.getElementById('imageInput').value = "";
+
+        const dropzone = document.getElementById('dropzone');
+        dropzone.classList.remove('drag-over');
+
+        if (!dropzone.querySelector('h3')) {
+            const infoText = document.createElement('h3');
+            infoText.textContent = 'drag & drop your PNG or JPEG files here';
+            dropzone.appendChild(infoText);
+        }
+    }
+
+    // Event listener for Browse button
+    document.getElementById('browse-button').addEventListener('click', () => {
+        imageInput.click();
+    });
+
+    // Event listener for Reset button
+    document.getElementById('reset-button').addEventListener('click', () => {
+        resetImage();
+    });
+
+    // Event listener for dropzone
     dropzone.addEventListener('dragover', (e) => {
         e.preventDefault();
         dropzone.classList.add('drag-over');
@@ -35,58 +81,5 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     
-    analyseButton.addEventListener('click', () => {
-        alert('Button clicked');
-        const tagToFind = elementInput.value;
-        
-        import('/script/Analyse.js')
-            .then(module => {
-                // The `analyzeImage` function should be exported from scriptToExecute.js
-                if (typeof module.analyzeImage === 'function') {
-                    module.analyzeImage(selectedImage.src, tagToFind);
-                } else {
-                    console.error('Function analyzeImage is not defined in the module.');
-                }
-            })
-            .catch(error => {
-                console.error('Error loading the module:', error);
-            });
-
-    
-    });
 
 });
-function removeInfoText() {
-    const infoText = dropzone.querySelector('h3');
-    if (infoText) {
-        infoText.remove();
-    }
-}
-
-
-function previewImage(event) {
-    const reader = new FileReader();
-    reader.onload = function () {
-        const output = document.getElementById('selectedImage');
-        output.style.width = "100%";
-        output.src = reader.result;
-        removeInfoText(); // Ensure removal after setting src
-    }
-    reader.readAsDataURL(event.target.files[0]);
-}
-
-function resetImage() {
-    const output = document.getElementById('selectedImage');
-    output.src = 'image.png';
-    output.style.width = "20%";
-    document.getElementById('imageInput').value = "";
-
-    const dropzone = document.getElementById('dropzone');
-    dropzone.classList.remove('drag-over');
-
-    if (!dropzone.querySelector('h3')) {
-        const infoText = document.createElement('h3');
-        infoText.textContent = 'drag & drop your PNG or JPEG files here';
-        dropzone.appendChild(infoText);
-    }
-}

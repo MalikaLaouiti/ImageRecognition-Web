@@ -18,7 +18,7 @@
             <tr>
                 <td rowspan="5" width="75%" >
                     <div class="dropzone" id="dropzone">
-                        <input type="file" id="imageInput" name="image" style="display:none;" accept="image/png" onchange="previewImage(event)">
+                        <input type="file" id="imageInput" name="image" style="display:none;" accept="image/png">
                         <img width="20%" id="selectedImage" src="image.png" alt="upload" />
                         <h3 >glissez et déposez vos fichiers PNG ici</h3>
                     </div>
@@ -48,6 +48,11 @@
                 <td>
                     <label id="foundLabel" style=" margin-left: 0px; margin-right: 5px;"> found</label>
                     <label id="notFoundLabel" style="margin-left: 5px; margin-right: 0px;"> not found</label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input type="text" id="result" placeholder="resultat"/>
                 </td>
             </tr>
         </table>
