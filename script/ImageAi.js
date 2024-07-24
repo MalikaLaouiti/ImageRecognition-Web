@@ -4,15 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const selectedImage = document.getElementById('selectedImage');
     const elementInput = document.getElementById('element');
 
-  
-
-    function removeInfoText() {
-        const infoText = dropzone.querySelector('h3');
-        if (infoText) {
-            infoText.remove();
-        }
-    }
-
     dropzone.addEventListener('dragover', (e) => {
         e.preventDefault();
         dropzone.classList.add('drag-over');
@@ -65,6 +56,13 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
 });
+function removeInfoText() {
+    const infoText = dropzone.querySelector('h3');
+    if (infoText) {
+        infoText.remove();
+    }
+}
+
 
 function previewImage(event) {
     const reader = new FileReader();

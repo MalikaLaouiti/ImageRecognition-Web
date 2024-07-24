@@ -5,10 +5,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Image Recognition</title>
         <link rel="stylesheet" href="ImageAI.css" />
-        <script language="javascript" src="./script/ImageAi.js" defer >
+        <!-- <script language="javascript" src="./script/ImageAi.js" defer >
         </script>
         <script src="https://cdn.jsdelivr.net/npm/@azure-rest/ai-vision-image-analysis"></script>
-        <script src="https://cdn.jsdelivr.net/npm/@azure/core-auth"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@azure/core-auth"></script> -->
     </head>
 <body>
     <div class="container" >
@@ -24,18 +24,18 @@
                     </div>
                 </td>
                 <td>
-                    <button type="button" id="browse-button" onclick="document.getElementById('imageInput').click();" >Parcourir</button>
+                    <button type="button" id="browse-button"  >Parcourir</button>
                 </td>
             </tr>
             <tr> 
                 <td>
-                    <button type="reset" id="reset-button" onclick="resetImage()">Réinitialiser</button>
+                    <button type="reset" id="reset-button" >Réinitialiser</button>
                 </td>
             </tr>
             <tr>
                 <td>
                     <button type="button" id="analyseButton">Analyse</button>
-                    <script language="javascript" src="./script/Analyse.js" type="module" async></script> 
+                    <!-- <script language="javascript" src="./script/Analyse.js" type="module" async></script>  -->
                 </td>
             </tr>
             <tr>
@@ -52,6 +52,7 @@
             </tr>
         </table>
     </div>  
-    
+    <script src="dist/main.bundle.js"></script>
+    <script src="dist/secondary.bundle.js"></script>
 </body>
 </html>

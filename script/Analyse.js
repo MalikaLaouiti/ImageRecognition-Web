@@ -1,7 +1,11 @@
+
+import createClient from '@azure-rest/ai-vision-image-analysis';
+import { AzureKeyCredential } from '@azure/core-auth';
+
 const endpoint =  "https://imagerecognition-webprosoft.cognitiveservices.azure.com/";
 const key =  "624e99b60d484ea091768b9fe9a1e983";
 
-const credential = new core-auth.AzureKeyCredential(key);
+const credential = new AzureKeyCredential(key);
 const client = createClient(endpoint, credential);
 
 const features = [
@@ -15,7 +19,7 @@ async function analyzeImage(imageUrl, tagToFind) {
     const notFoundLabel = document.getElementById('Not-found');
     const resultInput = document.getElementById('result');
     alert("gvug");
-    console.log('Analyzing image:', imageSrc, 'with tag:', tagToFind);
+    console.log('Analyzing image:', imageUrl, 'with tag:', tagToFind);
     try {
         const result = await client.path('/imageanalysis:analyze').post({
             body: { url: imageUrl },
@@ -56,7 +60,7 @@ async function analyzeImage(imageUrl, tagToFind) {
 document.addEventListener('DOMContentLoaded', () => {
     const selectedImage = document.getElementById('selectedImage');
     const analyseButton = document.getElementById('analyseButton');
-    const elementInput = document.getElementById('elementInput');
+    const elementInput = document.getElementById('element');
 
     // Vérifiez si les éléments sont correctement sélectionnés
     if (!analyseButton) {
@@ -70,11 +74,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 
-    // analyseButton.addEventListener('click', () => {
-    //     alert('Button clicked');
-    //     const tagToFind = elementInput.value;
-    //     analyzeImage(selectedImage.src, tagToFind);
-    // });
+    analyseButton.addEventListener('click', () => {
+        alert('Button clicked');
+        const tagToFind = elementInput.value;
+        analyzeImage(selectedImage.src, tagToFind);
+    });
 });
 
 
