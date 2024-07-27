@@ -1,6 +1,6 @@
-// webpack.config.js
 const path = require('path');
 const Dotenv = require('dotenv-webpack');
+const webpack = require('webpack');
 
 module.exports = {
   entry: {
@@ -12,8 +12,23 @@ module.exports = {
     path: path.resolve(__dirname, 'dist') // Output directory
   },
   plugins: [
-    new Dotenv() // This will automatically read your .env file
+    new Dotenv(), // This will automatically read your .env file
+    new webpack.ProvidePlugin({
+      process: 'process/browser',
+      Buffer: ['buffer', 'Buffer']
+    })
   ],
+  resolve: {
+    fallback: {
+      "path": require.resolve("path-browserify"),
+      "os": require.resolve("os-browserify/browser"),
+      "crypto": require.resolve("crypto-browserify"),
+      "vm": require.resolve("vm-browserify"),
+      "buffer": require.resolve("buffer/"),
+      "stream": require.resolve("stream-browserify"),
+      "process": require.resolve("process/browser")
+    }
+  },
   module: {
     rules: [
       {

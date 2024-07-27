@@ -1,3 +1,9 @@
+import { Buffer } from 'buffer';
+import process from 'process';
+
+window.Buffer = Buffer;
+window.process = process;
+
 document.addEventListener('DOMContentLoaded', () => {
     const dropzone = document.getElementById('dropzone');
     const imageInput = document.getElementById('imageInput');
