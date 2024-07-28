@@ -1,51 +1,63 @@
-require('dotenv').config();
-import fetch from 'node-fetch';
-import createClient from '@azure-rest/ai-vision-image-analysis';
-import { AzureKeyCredential } from '@azure/core-auth';
+const endpoint = process.env.ENDPOINT;
+const apiKey = process.env.API_KEY;
 
-const endpoint = process.env.AZURE_ENDPOINT; // Ensure this is correct and has no extra slashes
-const key = process.env.AZURE_KEY;
 const apiVersion = '2024-02-01'; // API version
-
-const credential = new AzureKeyCredential(key);
-const client = createClient(endpoint, credential);
-
 const features = ['tags', 'description'];
 
-async function analyzeImage(imageUrl, tagToFind) {
+// Function to convert image file to base64 string
+function imageToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result.split(',')[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
+async function analyzeImage(imageFile, tagToFind) {
     const foundLabel = document.getElementById('foundLabel');
     const notFoundLabel = document.getElementById('notFoundLabel');
     const resultInput = document.getElementById('result');
-    alert("Analyzing image...");
-    console.log('Analyzing image:', imageUrl, 'with tag:', tagToFind);
 
     if (!foundLabel || !notFoundLabel || !resultInput) {
         console.error('Required elements not found in the DOM.');
         return;
     }
 
+    alert("Analyzing image...");
+    console.log('Analyzing image with tag:', tagToFind);
+
     try {
-        const fullUrl = `${endpoint}/vision/v3.2/analyze`;
+        const base64Image = await imageToBase64(imageFile);
+
+        const fullUrl = `${endpoint}/vision/v3.2/analyze?${new URLSearchParams({
+            visualFeatures: features.join(','),
+            'api-version': apiVersion
+        }).toString()}`;
+
+        const requestBody = { url: `data:image/jpeg;base64,${base64Image}` };
+        console.log('Request URL:', fullUrl);
+        console.log('Request Body:', JSON.stringify(requestBody, null, 2));
+
         const response = await fetch(fullUrl, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Ocp-Apim-Subscription-Key': key // Ensure this key is correct
+                'Ocp-Apim-Subscription-Key': apiKey
             },
-            body: JSON.stringify({ url: imageUrl }),
-            query: new URLSearchParams({
-                visualFeatures: features.join(','),
-                'api-version': apiVersion
-            }).toString()
+            body: JSON.stringify(requestBody)
         });
 
+        console.log('Response Status:', response.status);
+        console.log('Response Headers:', JSON.stringify(response.headers, null, 2));
+
         if (!response.ok) {
-            const errorDetail = await response.text(); // Get response text to help with debugging
+            const errorDetail = await response.text();
             throw new Error(`Error ${response.status}: ${response.statusText}\nDetails: ${errorDetail}`);
         }
 
         const iaResult = await response.json();
-        console.log(iaResult);
+        console.log('Response Body:', JSON.stringify(iaResult, null, 2));
 
         if (iaResult.tags) {
             const tagFound = iaResult.tags.some(tag => tag.name === tagToFind);
@@ -84,15 +96,24 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('Element with ID "analyseButton" not found.');
         return;
     }
-    
+
     if (!elementInput) {
         console.error('Element with ID "element" not found.');
         return;
     }
 
-    analyseButton.addEventListener('click', () => {
+    analyseButton.addEventListener('click', async () => {
         alert('Button clicked');
+        alert(selectedImage);
         const tagToFind = elementInput.value;
-        analyzeImage(selectedImage.src, tagToFind);
+        
+        if (!selectedImage || !selectedImage.files || selectedImage.files.length === 0) {
+            console.error('No image file selected.');
+            alert('Please select an image file.');
+            return;
+        }
+
+        const imageFile = selectedImage.files[0];
+        await analyzeImage(imageFile, tagToFind);
     });
 });
