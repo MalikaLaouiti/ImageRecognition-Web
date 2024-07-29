@@ -1,5 +1,5 @@
-const endpoint = process.env.ENDPOINT;
-const apiKey = process.env.API_KEY;
+const endpoint = process.env.AZURE_ENDPOINT;
+const apiKey = process.env.AZURE_KEY;
 
 const apiVersion = '2024-02-01'; // API version
 const features = ['tags', 'description'];
@@ -8,13 +8,21 @@ const features = ['tags', 'description'];
 function imageToBase64(file) {
     return new Promise((resolve, reject) => {
         const reader = new FileReader();
-        reader.onloadend = () => resolve(reader.result.split(',')[1]);
-        reader.onerror = reject;
+
+        reader.onloadend = () => {
+            // Extract base64 data from data URL
+            const base64Data = reader.result.split(',')[1];
+            resolve(base64Data);
+        };
+
+        reader.onerror = (error) => {
+            reject(new Error(`Failed to convert image to base64: ${error.message}`));
+        };
+
+        // Ensure the file is read as a data URL
         reader.readAsDataURL(file);
     });
 }
-
-// Function to handle the image analysis
 async function analyzeImage(input, tagToFind) {
     const foundLabel = document.getElementById('foundLabel');
     const notFoundLabel = document.getElementById('notFoundLabel');
@@ -27,19 +35,20 @@ async function analyzeImage(input, tagToFind) {
 
     alert("Analyzing image...");
     console.log('Analyzing image with tag:', tagToFind);
-    console.log('Analyzing image :', input);
-    try {
-        let requestBody;
 
-        if (typeof input === 'string' && input.startsWith('http')) {
-            // Input is a URL
-            requestBody = { url: input };
-        } else if (input instanceof File) {
-            // Input is a File object
-            const base64Image = await imageToBase64(input);
-            requestBody = { url: `data:image/jpeg;base64,${base64Image}` };
+    try {
+        let response;
+        const formData = new FormData();
+
+        if (input instanceof File) {
+            // Append the file to the form data
+            formData.append('file', input);
+        } else if (typeof input === 'string' && input.startsWith('http')) {
+            // Append URL as a query parameter for the API
+            // You may need to use a different endpoint or method for URL-based images
+            throw new Error('URL-based image analysis is not supported with this method.');
         } else {
-            throw new Error('Invalid input type. Must be a URL or a File object.');
+            throw new Error('Invalid input type. Must be a File object.');
         }
 
         const fullUrl = `${endpoint}/vision/v3.2/analyze?${new URLSearchParams({
@@ -48,15 +57,13 @@ async function analyzeImage(input, tagToFind) {
         }).toString()}`;
 
         console.log('Request URL:', fullUrl);
-        console.log('Request Body:', JSON.stringify(requestBody, null, 2));
 
-        const response = await fetch(fullUrl, {
+        response = await fetch(fullUrl, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
                 'Ocp-Apim-Subscription-Key': apiKey
             },
-            body: JSON.stringify(requestBody)
+            body: formData
         });
 
         console.log('Response Status:', response.status);
@@ -74,13 +81,9 @@ async function analyzeImage(input, tagToFind) {
             const tagFound = iaResult.tags.some(tag => tag.name === tagToFind);
 
             if (tagFound) {
-                foundLabel.style.display = 'block';
                 foundLabel.style.background = "green";
-                notFoundLabel.style.display = 'none';
                 resultInput.value = `The tag "${tagToFind}" was found in the image.`;
             } else {
-                foundLabel.style.display = 'none';
-                notFoundLabel.style.display = 'block';
                 notFoundLabel.style.background = "red";
                 resultInput.value = `The tag "${tagToFind}" was not found in the image.`;
             }
@@ -97,7 +100,6 @@ async function analyzeImage(input, tagToFind) {
         resultInput.value = `Error analyzing image: ${error.message}`;
     }
 }
-
 
 document.addEventListener('DOMContentLoaded', () => {
     const imageInput = document.getElementById('imageInput');
