@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
         dropzone.classList.remove('drag-over');
         removeInfoText();
         const files = e.dataTransfer.files;
-        if (files.length > 0 && (files[0].type === 'image/png' || files[0].type === 'image/jpeg')) {
+        if (files.length > 0 && (files[0].type === 'image/png' )) {
             const reader = new FileReader();
             reader.onload = function (event) {
                 selectedImage.src = event.target.result;

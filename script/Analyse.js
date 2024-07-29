@@ -14,7 +14,8 @@ function imageToBase64(file) {
     });
 }
 
-async function analyzeImage(imageFile, tagToFind) {
+// Function to handle the image analysis
+async function analyzeImage(input, tagToFind) {
     const foundLabel = document.getElementById('foundLabel');
     const notFoundLabel = document.getElementById('notFoundLabel');
     const resultInput = document.getElementById('result');
@@ -26,16 +27,26 @@ async function analyzeImage(imageFile, tagToFind) {
 
     alert("Analyzing image...");
     console.log('Analyzing image with tag:', tagToFind);
-
+    console.log('Analyzing image :', input);
     try {
-        const base64Image = await imageToBase64(imageFile);
+        let requestBody;
+
+        if (typeof input === 'string' && input.startsWith('http')) {
+            // Input is a URL
+            requestBody = { url: input };
+        } else if (input instanceof File) {
+            // Input is a File object
+            const base64Image = await imageToBase64(input);
+            requestBody = { url: `data:image/jpeg;base64,${base64Image}` };
+        } else {
+            throw new Error('Invalid input type. Must be a URL or a File object.');
+        }
 
         const fullUrl = `${endpoint}/vision/v3.2/analyze?${new URLSearchParams({
             visualFeatures: features.join(','),
             'api-version': apiVersion
         }).toString()}`;
 
-        const requestBody = { url: `data:image/jpeg;base64,${base64Image}` };
         console.log('Request URL:', fullUrl);
         console.log('Request Body:', JSON.stringify(requestBody, null, 2));
 
@@ -87,7 +98,9 @@ async function analyzeImage(imageFile, tagToFind) {
     }
 }
 
+
 document.addEventListener('DOMContentLoaded', () => {
+    const imageInput = document.getElementById('imageInput');
     const selectedImage = document.getElementById('selectedImage');
     const analyseButton = document.getElementById('analyseButton');
     const elementInput = document.getElementById('element');
@@ -102,18 +115,44 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
+    // Convert image to File
+    async function imageToFile(imgElement) {
+        // Create a canvas element
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        // Set canvas size to image size
+        canvas.width = imgElement.naturalWidth;
+        canvas.height = imgElement.naturalHeight;
+        // Draw image on canvas
+        ctx.drawImage(imgElement, 0, 0);
+        // Convert canvas to Blob
+        const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
+        // Create File object from Blob
+        const file = new File([blob], 'selected-image.png', { type: 'image/png' });
+        return file;
+    }
+
+    // Handle analyze button click
     analyseButton.addEventListener('click', async () => {
         alert('Button clicked');
-        alert(selectedImage);
-        const tagToFind = elementInput.value;
-        
-        if (!selectedImage || !selectedImage.files || selectedImage.files.length === 0) {
-            console.error('No image file selected.');
-            alert('Please select an image file.');
-            return;
-        }
 
-        const imageFile = selectedImage.files[0];
-        await analyzeImage(imageFile, tagToFind);
+        if (selectedImage.src) {
+            try {
+                const imageFile = await imageToFile(selectedImage);
+                // Update imageInput with the new file
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(imageFile);
+                imageInput.files = dataTransfer.files;
+
+                // Proceed with analysis
+                console.log('imageFile', imageFile);
+                await analyzeImage(imageFile, elementInput.value);
+            } catch (error) {
+                console.error('Error converting image to file:', error);
+            }
+        } else {
+            console.error('No image in selectedImage.');
+            alert('Please select an image first.');
+        }
     });
 });
