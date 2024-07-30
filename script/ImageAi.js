@@ -3,6 +3,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const imageInput = document.getElementById('imageInput');
     const selectedImage = document.getElementById('selectedImage');
     const elementInput = document.getElementById('element');
+    const foundLabel = document.getElementById('foundLabel');
+    const notFoundLabel = document.getElementById('notFoundLabel');
+    const resultInput = document.getElementById('result');
   
     function removeInfoText() {
         const infoText = dropzone.querySelector('h3');
@@ -31,6 +34,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const dropzone = document.getElementById('dropzone');
         dropzone.classList.remove('drag-over');
+        foundLabel.style.background = "#5ea0b7";
+        foundLabel.style.color="#223A59";
+        notFoundLabel.style.background = "#5ea0b7";
+        notFoundLabel.style.color="#223A59";
+        resultInput.value ="";
+        elementInput.value=""
+
 
         if (!dropzone.querySelector('h3')) {
             const infoText = document.createElement('h3');

@@ -82,16 +82,16 @@ async function analyzeImage(input, tagToFind) {
 
             if (tagFound) {
                 foundLabel.style.background = "green";
-                resultInput.value = `The tag "${tagToFind}" was found in the image.`;
+                resultInput.value = `The tag "${tagToFind}" was found `;
             } else {
                 notFoundLabel.style.background = "red";
-                resultInput.value = `The tag "${tagToFind}" was not found in the image.`;
+                resultInput.value = `The tag "${tagToFind}" was not found `;
             }
         } else {
             console.log('No tag results found.');
             foundLabel.style.display = 'none';
             notFoundLabel.style.display = 'none';
-            resultInput.value = 'No tag results found in the image.';
+            resultInput.value = 'No tag results found ';
         }
     } catch (error) {
         console.error('Error analyzing image:', error);
