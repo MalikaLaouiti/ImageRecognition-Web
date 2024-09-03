@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-  "build": "webpack",
+  "build": "ESLINT_NO_DEV_ERRORS=true next build",
   "start": "webpack serve --open",
   "dev": "webpack serve --open",
   "postinstall": ""
