@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (!dropzone.querySelector('h3')) {
             const infoText = document.createElement('h3');
-            infoText.textContent = 'drag & drop your PNG or JPEG files here';
+            infoText.textContent = 'drag & drop your PNG files here';
             dropzone.appendChild(infoText);
         }
     }

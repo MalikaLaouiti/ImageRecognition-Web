@@ -32,14 +32,17 @@ async function analyzeImage(input, tagToFind) {
         console.error('Required elements not found in the DOM.');
         return;
     }
-
+    
     alert("Analyzing image...");
     console.log('Analyzing image with tag:', tagToFind);
-
+    
     try {
         let response;
         const formData = new FormData();
-
+        foundLabel.style.background = "#5ea0b7";
+        notFoundLabel.style.background = "#5ea0b7";
+        resultInput.value = ``;
+        
         if (input instanceof File) {
             // Append the file to the form data
             formData.append('file', input);
@@ -78,8 +81,9 @@ async function analyzeImage(input, tagToFind) {
         console.log('Response Body:', JSON.stringify(iaResult, null, 2));
 
         if (iaResult.tags) {
+            alert('changed');
             const tagFound = iaResult.tags.some(tag => tag.name === tagToFind);
-
+           
             if (tagFound) {
                 foundLabel.style.background = "green";
                 resultInput.value = `The tag "${tagToFind}" was found `;
@@ -106,6 +110,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const selectedImage = document.getElementById('selectedImage');
     const analyseButton = document.getElementById('analyseButton');
     const elementInput = document.getElementById('element');
+    const foundLabel = document.getElementById('foundLabel');
+    const notFoundLabel = document.getElementById('notFoundLabel');
+    const resultInput = document.getElementById('result');
 
     if (!analyseButton) {
         console.error('Element with ID "analyseButton" not found.');
@@ -137,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Handle analyze button click
     analyseButton.addEventListener('click', async () => {
         alert('Button clicked');
-
+        
         if (selectedImage.src) {
             try {
                 const imageFile = await imageToFile(selectedImage);
