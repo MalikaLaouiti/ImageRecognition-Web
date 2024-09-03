@@ -4,9 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "webpack serve --open",
-    "build": "webpack",
-    "dev": "webpack serve --open"
+  "build": "webpack",
+  "start": "webpack serve --open",
+  "dev": "webpack serve --open",
+  "postinstall": ""
   },
   "dependencies": {
     "@azure-rest/ai-vision-image-analysis": "^1.0.0-beta.3",
